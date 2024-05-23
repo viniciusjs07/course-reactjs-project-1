@@ -5,6 +5,7 @@
     "singleQuote": true,
     "bracketSameLine": false,
     "bracketSpacing": true,
+    "eslintIntegration": true,
     "printWidth": 120,
     "endOfLine": "auto"
 }
