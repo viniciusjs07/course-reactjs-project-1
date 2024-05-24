@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import './styles.css';
 
@@ -7,63 +7,90 @@ import { loadPosts } from '../../utils/load-posts';
 import { Button } from '../../components/Button';
 import { SearchInput } from '../../components/SearchInput';
 
-class Home extends Component {
-  state = {
-    posts: [],
-    allPosts: [],
-    page: 0,
-    postsPerPage: 3,
-    searchValue: '',
-  };
+export const Home = () => {
+  const [posts, setPosts] = useState([]);
+  const [allPosts, setAllPosts] = useState([]);
+  const [page, setPage] = useState(0);
+  const [postsPerPage] = useState(10);
+  const [searchValue, setSearchValue] = useState('');
 
-  async componentDidMount() {
-    await this.loadPosts();
-  }
+  const noMorePosts = !posts.length || posts.length === allPosts.length;
+  const filteredPosts = searchValue
+    ? allPosts.filter((post) => {
+        return post.title.toLowerCase().includes(searchValue.toLocaleLowerCase());
+      })
+    : posts;
 
-  loadPosts = async () => {
-    const { page, postsPerPage } = this.state;
+  const onLoadPosts = useCallback(async (page, postsPerPage) => {
     const postsAndPhotos = await loadPosts();
     //pagination local
-    this.setState({ posts: postsAndPhotos.slice(page, postsPerPage), allPosts: postsAndPhotos });
-  };
+    setPosts(postsAndPhotos.slice(page, postsPerPage));
+    setAllPosts(postsAndPhotos);
+  }, []);
 
-  loadMorePosts = () => {
-    const { page, postsPerPage, allPosts, posts } = this.state;
+  useEffect(() => {
+    onLoadPosts(0, postsPerPage);
+  }, [onLoadPosts, postsPerPage]);
+
+  const loadMorePosts = () => {
     const nextPage = page + postsPerPage;
     const nextPosts = allPosts.slice(nextPage, nextPage + postsPerPage);
     posts.push(...nextPosts);
-    this.setState({ posts, page: nextPage });
+    setPosts(posts);
+    setPage(nextPage);
   };
 
-  handleSearch = (event) => {
+  const handleSearch = (event) => {
     const { value } = event.target;
-    this.setState({ searchValue: value });
+    setSearchValue(value);
   };
-  render() {
-    const { posts, allPosts, searchValue: searchValue } = this.state;
-    const noMorePosts = !posts.length || posts.length === allPosts.length;
-    const filteredPosts = searchValue
-      ? allPosts.filter((post) => {
-          return post.title.toLowerCase().includes(searchValue.toLocaleLowerCase());
-        })
-      : posts;
-    return (
-      <section className="container">
-        <div className="search-container">
-          {!!searchValue && (
-            <>
-              <h1>Pesquisar por: {searchValue}</h1>
-            </>
-          )}
-          <SearchInput searchValue={searchValue} handleSearch={this.handleSearch}></SearchInput>
-        </div>
-        {filteredPosts.length ? <Posts posts={filteredPosts} /> : <p> Não existem posts</p>}
-        <div className="button-container">
-          {!searchValue && <Button disabled={noMorePosts} onClick={this.loadMorePosts} text={'Mais posts'}></Button>}
-        </div>
-      </section>
-    );
-  }
-}
+
+  return (
+    <section className="container">
+      <div className="search-container">
+        {!!searchValue && (
+          <>
+            <h1>Pesquisar por: {searchValue}</h1>
+          </>
+        )}
+        <SearchInput searchValue={searchValue} handleSearch={handleSearch}></SearchInput>
+      </div>
+      {filteredPosts.length ? <Posts posts={filteredPosts} /> : <p> Não existem posts</p>}
+      <div className="button-container">
+        {!searchValue && <Button disabled={noMorePosts} onClick={loadMorePosts} text={'Mais posts'}></Button>}
+      </div>
+    </section>
+  );
+};
+
+// Exemplo de manipulação de estado com useState
+// export class Home extends Component {
+//   state = {
+//     counter: 0,
+//   };
+//   handleClick = () => {
+//     this.setState(
+//       (prevState, prevProps) => {
+//         console.log('prevSTATE ', prevState);
+//         console.log('prevProps ', prevProps);
+//         return { counter: prevState.counter + 1 };
+//       },
+//       () => {
+//         console.log('counter 1 ', this.state.counter);
+//       },
+//     );
+//     console.log('counter ', this.state.counter);
+//   };
+//   render() {
+//     return (
+//       <div className="container">
+//         <h1>Contador : {this.state.counter}</h1>
+//         <button className="button" onClick={this.handleClick}>
+//           Add
+//         </button>
+//       </div>
+//     );
+//   }
+// }
 
 export default Home;
