@@ -6,12 +6,13 @@ import { Posts } from '../../components/Posts';
 import { loadPosts } from '../../utils/load-posts';
 import { Button } from '../../components/Button';
 import { SearchInput } from '../../components/SearchInput';
+import PropTypes from 'prop-types';
 
-export const Home = () => {
+export const Home = ({ postsPage = 10 }) => {
   const [posts, setPosts] = useState([]);
   const [allPosts, setAllPosts] = useState([]);
   const [page, setPage] = useState(0);
-  const [postsPerPage] = useState(10);
+  const [postsPerPage] = useState(postsPage);
   const [searchValue, setSearchValue] = useState('');
 
   const noMorePosts = !posts.length || posts.length === allPosts.length;
@@ -61,6 +62,14 @@ export const Home = () => {
       </div>
     </section>
   );
+};
+
+Home.defaultProps = {
+  postsPage: 2,
+};
+
+Home.propTypes = {
+  postsPage: PropTypes.number.isRequired,
 };
 
 // Exemplo de manipulação de estado com useState

@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
+import { userEvent } from '@testing-library/user-event';
 
 import { Button } from '.';
 
@@ -18,14 +18,15 @@ describe('<Button/>', () => {
     expect.assertions(2);
   });
 
-  it('Should call function on button click', () => {
+  it('Should call function on button click', async () => {
     // create a mock function
     render(<Button text="Load more" onClick={fn} />);
 
     const button = screen.getByRole('button', { name: /load more/i });
 
     // userEvent or fireEvent simule click
-    userEvent.click(button);
+    screen.debug(button);
+    await userEvent.click(button);
     expect(fn).toHaveBeenCalledTimes(1);
     expect.assertions(1);
   });

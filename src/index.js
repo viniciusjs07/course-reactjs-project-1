@@ -6,7 +6,7 @@ import Home from './templates/Home';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <Home />
+    <Home postsPage={10} />
   </React.StrictMode>,
 );
 
