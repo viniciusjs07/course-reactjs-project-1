@@ -14,6 +14,6 @@ export const SearchInput = ({ searchValue, handleSearch }) => {
 };
 
 SearchInput.propTypes = {
-  searchValue: PropTypes.string,
-  handleSearch: PropTypes.func,
+  searchValue: PropTypes.string.isRequired,
+  handleSearch: PropTypes.func.isRequired,
 };
