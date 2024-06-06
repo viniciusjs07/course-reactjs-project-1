@@ -1,11 +1,12 @@
+import { render, screen, waitForElementToBeRemoved } from '@testing-library/react';
+import { default as Home } from '.';
+
 describe('<Home/>', () => {
-  it('Test one', () => {
-    expect(1).toBe(1);
-  });
-  it('Teste two', () => {
-    expect(1).toBe(1);
-  });
-  it('Teste three', () => {
-    expect(1).toBe(1);
+  it('should render search, posts and load more', async () => {
+    render(<Home />);
+    const noMorePosts = screen.getByText('Não existem posts');
+
+    await waitForElementToBeRemoved(noMorePosts);
+    screen.debug();
   });
 });
